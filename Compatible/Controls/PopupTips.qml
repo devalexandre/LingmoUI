@@ -81,27 +81,41 @@ Window {
         color: LingmoUI.Theme.textColor
     }
 
-    onPositionChanged: adjustCorrectLocation()
+    // Callers center the tip over their item using the width it had at that moment:
+    // remember that center so a later width change (new text, font loaded) keeps it
+    property real _centerX: 0
+    onPositionChanged: {
+        _centerX = position.x + width / 2
+        adjustCorrectLocation()
+    }
+    onWidthChanged: if (visible || popupText) adjustCorrectLocation()
+
+    // Screen containing a point of the virtual desktop (the tip's own Screen is
+    // whatever screen the window happened to be created on)
+    function screenAt(x, y) {
+        var screens = Qt.application.screens
+        for (var i = 0; i < screens.length; ++i) {
+            var s = screens[i]
+            if (x >= s.virtualX && x < s.virtualX + s.width && y >= s.virtualY && y < s.virtualY + s.height)
+                return s
+        }
+        return screens.length > 0 ? screens[0] : null
+    }
 
     function adjustCorrectLocation() {
-        var posX = control.position.x
+        var margin = LingmoUI.Units.smallSpacing
+        var posX = Math.round(_centerX - control.width / 2)
         var posY = control.position.y
+        var s = screenAt(_centerX, posY)
 
-        // left
-        if (posX <= Screen.virtualX)
-            posX = Screen.virtualX + LingmoUI.Units.smallSpacing
+        if (s) {
+            var left = s.virtualX, top = s.virtualY
+            var right = left + s.width, bottom = top + s.height
 
-        // top
-        if (posY <= Screen.virtualY)
-            posY = Screen.virtualY + LingmoUI.Units.smallSpacing
-
-        // right
-        if (posX + control.width > Screen.virtualX + Screen.width)
-            posX = Screen.virtualX + Screen.width - control.width - 1
-
-        // bottom
-        if (posY > control.height > Screen.virtualY + Screen.width)
-            posY = Screen.virtualY + Screen.width - control.width - 1
+            posX = Math.max(left + margin, Math.min(posX, right - control.width - margin))
+            posY = Math.max(top + margin, Math.min(posY, bottom - control.height - margin))
+            control.screen = s
+        }
 
         control.x = posX
         control.y = posY

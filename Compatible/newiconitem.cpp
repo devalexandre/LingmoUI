@@ -141,10 +141,21 @@ void NewIconItem::loadPixmap()
     update();
 }
 
+void NewIconItem::componentComplete()
+{
+    QQuickPaintedItem::componentComplete();
+    // setSource()/geometryChange() skip loading until the component is complete:
+    // without this an item that never moves or resizes afterwards stays empty
+    loadPixmap();
+}
+
 void NewIconItem::geometryChange(const QRectF& newGeometry,
     const QRectF& oldGeometry)
 {
-    if (newGeometry.width() > 0 && newGeometry.height() > 0) {
+    QQuickPaintedItem::geometryChange(newGeometry, oldGeometry);
+
+    if (newGeometry.size() != oldGeometry.size()
+        && newGeometry.width() > 0 && newGeometry.height() > 0) {
         loadPixmap();
     }
 }

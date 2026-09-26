@@ -47,6 +47,7 @@ signals:
 
 protected:
     void loadPixmap();
+    void componentComplete() override;
     void geometryChange(const QRectF& newGeometry, const QRectF& oldGeometry) override;
 
 private:

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
+set(QT_NO_PRIVATE_MODULE_WARNING ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -33,11 +34,14 @@ find_package(ECM REQUIRED NO_MODULE)
 list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 message(STATUS "ECM version: ${ECM_VERSION}")
 
-set(QT Core Widgets Quick QuickControls2 DBus Core5Compat)
+set(QT Core Gui Widgets Qml Quick QuickControls2 DBus Core5Compat)
+if (UNIX AND NOT APPLE)
+    # Qt >= 6.10 requires private modules to be requested explicitly
+    list(APPEND QT GuiPrivate QuickPrivate)
+endif ()
 find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED ${QT})
 if (UNIX)
     if (NOT APPLE)
-        list(APPEND QT GuiPrivate)
         find_package(KF6WindowSystem )
         # If not found, warn and continue
         if (NOT KF6WindowSystem_FOUND)

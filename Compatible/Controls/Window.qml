@@ -256,7 +256,7 @@ QtQuick.Window {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: 35
+            height: 38
 
             property int buttonSize: 31
             property int spacing: (_header.height - _header.buttonSize) / 2
@@ -284,58 +284,28 @@ QtQuick.Window {
                 anchors.fill: parent
                 spacing: 0
 
+                // Lingmo window controls on the left: close, minimize, zoom
+                Item {
+                    Layout.preferredWidth: 12
+                }
+
+                WindowControls {
+                    Layout.alignment: Qt.AlignVCenter
+                    windowActive: control.active
+                    maximized: control.isMaximized
+                    minimizeVisible: control.minimizeButtonVisible
+                    zoomVisible: !control.isFullScreen && control.minimumWidth !== control.maximumWidth
+                                 && control.maximumHeight !== control.minimumHeight
+                    onCloseClicked: control.close()
+                    onMinimizeClicked: windowHelper.minimizeWindow(control)
+                    onZoomClicked: control.toggleMaximized()
+                }
+
                 Item {
                     id: _headerContent
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                }
-
-                RowLayout {
-                    spacing: LingmoUI.Units.smallSpacing
-                    Layout.alignment: Qt.AlignTop
-
-                    // Window buttons
-                    RoundImageButton {
-                        size: _header.buttonSize
-                        source: "qrc:/lingmoui/kit/compatible_module/LingmoUI/CompatibleModule/images/" + (LingmoUI.Theme.darkMode ? "dark/" : "light/") + "minimize.svg"
-                        onClicked: windowHelper.minimizeWindow(control)
-                        visible: control.minimizeButtonVisible
-                        Layout.alignment: Qt.AlignTop
-                        Layout.topMargin: _header.spacing
-                        image.smooth: false
-                        image.antialiasing: true
-                        iconMargins: 2
-                    }
-
-                    RoundImageButton {
-                        size: _header.buttonSize
-                        source: "qrc:/lingmoui/kit/compatible_module/LingmoUI/CompatibleModule/images/" +
-                            (LingmoUI.Theme.darkMode ? "dark/" : "light/") +
-                            (control.visibility === Window.Maximized ? "restore.svg" : "maximize.svg")
-                        onClicked: control.toggleMaximized()
-                        visible: !control.isFullScreen &&  control.minimumWidth !== control.maximumWidth && control.maximumHeight !== control.minimumHeight
-                        Layout.alignment: Qt.AlignTop
-                        Layout.topMargin: _header.spacing
-                        image.smooth: false
-                        image.antialiasing: true
-                        iconMargins: 2
-                    }
-
-                    RoundImageButton {
-                        size: _header.buttonSize
-                        source: "qrc:/lingmoui/kit/compatible_module/LingmoUI/CompatibleModule/images/" + (LingmoUI.Theme.darkMode ? "dark/" : "light/") + "close.svg"
-                        onClicked: control.close()
-                        // visible: !control.isFullScreen
-                        Layout.alignment: Qt.AlignTop
-                        Layout.topMargin: _header.spacing
-                        image.smooth: false
-                        image.antialiasing: true
-                        iconMargins: 2
-                    }
-                }
-
-                Item {
-                    width: _header.spacing
+                    Layout.leftMargin: 12
                 }
             }
         }

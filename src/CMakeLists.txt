@@ -99,10 +99,17 @@ set_target_properties(${TARGET}
 
 add_subdirectory(GraphicalEffects)
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/temp/${PROJECT_NAME} DESTINATION ${INSTALL_QMLDIR})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/temp/${PROJECT_NAME} DESTINATION ${INSTALL_QMLDIR}
+        PATTERN "lib${TARGET}.so*" EXCLUDE)
 generate_export_header(${TARGET} BASE_NAME ${TARGET})
 
-install(TARGETS ${TARGET} EXPORT ${TARGET}Targets DESTINATION ${INSTALL_QMLDIR}/${PROJECT_NAME})
+# The library is linked directly by apps (statusbar, filemanager...), so it must
+# live in the linker path; the QML module dir only gets a symlink to it.
+install(TARGETS ${TARGET} EXPORT ${TARGET}Targets DESTINATION ${CMAKE_INSTALL_LIBDIR})
+file(RELATIVE_PATH _lingmoui_lib_rel "${INSTALL_QMLDIR}/${PROJECT_NAME}"
+     "${CMAKE_INSTALL_FULL_LIBDIR}/lib${TARGET}.so.${MODULE_VERSION_MAJOR}")
+install(CODE "file(CREATE_LINK \"${_lingmoui_lib_rel}\"
+    \"\$ENV{DESTDIR}${INSTALL_QMLDIR}/${PROJECT_NAME}/lib${TARGET}.so\" SYMBOLIC)")
 
 # Install Header
 install(FILES ${H_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${TARGET})

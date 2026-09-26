@@ -62,8 +62,8 @@ LingmoUI.MenuPopupWindow {
     ColumnLayout {
         id: _mainLayout
         anchors.fill: parent
-        anchors.topMargin: 4
-        anchors.bottomMargin: 4
+        anchors.margins: 5
+        spacing: 1
     }
 
     function open() {
