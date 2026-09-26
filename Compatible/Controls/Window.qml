@@ -346,7 +346,7 @@ QtQuick.Window {
 
     function showPassiveNotification(message, timeout, actionText, callBack) {
         if (!internal.passiveNotification) {
-            var component = Qt.createComponent("qrc:/lingmoui/kit/LingmoUI/controls/Toast.qml")
+            var component = Qt.createComponent(Qt.resolvedUrl("Toast.qml"))
             internal.passiveNotification = component.createObject(control)
         }
 
