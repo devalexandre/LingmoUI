@@ -94,6 +94,16 @@ qt_add_qml_module(${TARGET}
     RESOURCE_PREFIX "/lingmoui/kit"
 )
 
+# Translations, embedded where LingmoApp::init() looks for them
+# (:/qt/qml/LingmoUI/i18n/lingmoui_<locale>.qm)
+file(GLOB LINGMOUI_TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../translations/lingmoui_*.ts)
+qt_add_translation(LINGMOUI_QM_FILES ${LINGMOUI_TS_FILES})
+qt_add_resources(${TARGET} "lingmoui_i18n"
+    PREFIX "/qt/qml/LingmoUI/i18n"
+    BASE ${CMAKE_CURRENT_BINARY_DIR}
+    FILES ${LINGMOUI_QM_FILES}
+)
+
 set_target_properties(${TARGET}
     PROPERTIES  VERSION ${MODULE_VERSION} SOVERSION ${MODULE_VERSION_MAJOR})
 

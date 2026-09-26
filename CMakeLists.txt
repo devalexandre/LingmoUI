@@ -34,7 +34,7 @@ find_package(ECM REQUIRED NO_MODULE)
 list(APPEND CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 message(STATUS "ECM version: ${ECM_VERSION}")
 
-set(QT Core Gui Widgets Qml Quick QuickControls2 DBus Core5Compat)
+set(QT Core Gui Widgets Qml Quick QuickControls2 DBus Core5Compat LinguistTools)
 if (UNIX AND NOT APPLE)
     # Qt >= 6.10 requires private modules to be requested explicitly
     list(APPEND QT GuiPrivate QuickPrivate)
